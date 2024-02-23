@@ -2,7 +2,7 @@
 from embdevtools import get_file_name, CellTracking, save_4Dstack, save_4Dstack_labels, norm_stack_per_z, compute_labels_stack, get_file_names, construct_RGB, extract_fluoro
 
 ### PATH TO YOU DATA FOLDER AND TO YOUR SAVING FOLDER ###
-TIME = "48hr"
+TIME = "72hr"
 path_data_dir='/home/pablo/Desktop/PhD/projects/Data/gastruloids/stephen/stacks/{}/'.format(TIME)
 path_save_dir='/home/pablo/Desktop/PhD/projects/Data/gastruloids/stephen/ctobjects/{}/'.format(TIME)
 path_figures = "/home/pablo/Desktop/PhD/projects/GastruloidRobustness/figures/"
@@ -78,7 +78,7 @@ for file in files:
         # 'plot_stack_dims': (256, 256), 
         'plot_centers':[True, True], # [Plot center as a dot, plot label on 3D center]
         # 'channels':[ch],
-        'channels': chans_plot,
+        'channels': [3],
         'min_outline_length':75,
     }
 
@@ -94,7 +94,8 @@ for file in files:
     )
 
     CT.load()
-    # CT.plot_tracking(plot_args)
+    print(len(CT.jitcells))
+    CT.plot_tracking(plot_args)
 
     # from embdevtools import remove_small_cells, plot_cell_sizes
     # plot_cell_sizes(CT, bw=30, bins=40, xlim=(0,400))
@@ -104,12 +105,11 @@ for file in files:
     ch = channel_names.index("DAPI")
     correction_function, intensity_profile, z_positions = get_intenity_profile(CT, ch)
 
-    # CT.plot_tracking(plot_args)
-    # import matplotlib.pyplot as plt
-    # fig, ax = plt.subplots()
-    # ax.plot(z_positions, intensity_profile)
-    # ax.plot(range(CT.slices), correction_function, ls="--")
-    # plt.show()
+    import matplotlib.pyplot as plt
+    fig, ax = plt.subplots()
+    ax.plot(z_positions, intensity_profile)
+    ax.plot(range(CT.slices), correction_function, ls="--")
+    plt.show()
 
     import numpy as np
     for ch in range(CT.hyperstack.shape[2]):
@@ -142,15 +142,14 @@ colors = np.asarray([[1.0, 0.0, 1.0, 0.7],
           [0.5, 0.5, 0.5, 0.7],
           [0.5, 0.5, 0.5, 1.0]])
 
-DATA.append([[],[],[],[]])
 channel_names_plot = []
 data = []
 
 for ch, ch_name in enumerate(channel_names):
     channel_names_plot.append("{}-D".format(ch_name))
     channel_names_plot.append("{}-C".format(ch_name))
-    data.append(DATA[0][ch])
     data.append(DATA[1][ch])
+    data.append(DATA[0][ch])
 data_means = [np.mean(d) for d in data]
 data_stds  = [np.std(d) for d in data]
 
