@@ -15,11 +15,11 @@ CONDITIONS_48 = ["Wnt3KO", "WT"]
 
 exp=0
 EXP = EXPERIMENTS[exp]
-TIME = TIMES[0]
+TIME = TIMES[-1]
 if TIME=="48h":
-    COND = CONDITIONS_48[0]
+    COND = CONDITIONS_48[1]
 else:
-    COND = CONDITIONS[0]
+    COND = CONDITIONS[1]
 
 path_data_dir='/home/pablo/Desktop/PhD/projects/Data/gastruloids/stephen/{}/{}/{}/'.format(EXP, TIME, COND)
 path_save_dir='/home/pablo/Desktop/PhD/projects/Data/gastruloids/stephen/ctobjects/{}/{}/{}/'.format(EXP, TIME, COND)
