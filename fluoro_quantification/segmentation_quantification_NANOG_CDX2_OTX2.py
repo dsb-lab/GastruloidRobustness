@@ -20,10 +20,7 @@ for file in files:
     channel_names = ["SOX2", "OCT4", "BRA", "DAPI"]
 
     file, embcode = get_file_name(path_data_dir, file, allow_file_fragment=False, return_files=False, return_name=True)
-    if "DMSO" in file:
-        CONDS.append("DMSO")
-    elif "CHIR" in file:
-        CONDS.append("CHIRON")
+    print(file)
     
     path_data = path_data_dir+file
     path_save = path_save_dir+embcode
