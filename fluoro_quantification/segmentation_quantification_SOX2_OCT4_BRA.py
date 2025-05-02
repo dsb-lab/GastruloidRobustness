@@ -134,7 +134,7 @@ for T, TIME in enumerate(TIMES):
                 channels=chans
             )
 
-            CT.run()
+            CT.load()
             # CT.plot(plot_args)
             
             labs_to_rem = []
