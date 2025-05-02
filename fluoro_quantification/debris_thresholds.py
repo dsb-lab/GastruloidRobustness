@@ -1,5 +1,5 @@
 ### LOAD PACKAGE ###
-from qlivecell import get_file_name, cellSegTrack, save_4Dstack, norm_stack_per_z, compute_labels_stack, get_file_names, construct_RGB, extract_fluoro, correct_drift
+from qlivecell import get_file_name, cellSegTrack, save_4Dstack, norm_stack_per_z, get_intenity_profile, get_file_names, construct_RGB, extract_fluoro, correct_drift
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -13,29 +13,14 @@ TIMES = ["48h", "60h", "72h", "84h", "96h"]
 CONDITIONS = ["Wnt3KO_DMSO", "WT_CHIR", "WT_DMSO"]
 CONDITIONS_48 = ["Wnt3KO", "WT"]
 
-files_to_segment = [
-    # nanog
-    "G2-60h E14 CHIR NANOG647 CDX2_555 OTX2_488 DAPI_11.tif",
-    "G5-60h E14 CHIR NANOG647 CDX2_555 OTX2_488 DAPI_11.tif",
-    "G2-60h WNT3KO DMSO NANOG647 CDX2_555 OTX2_488 DAPI_11.tif",
-    "G3-Wnt3KO DMSO 72H NANOG_647 CDX2_555 OTX2_488 DAPI_07.tif",
-    "G3-84h E14 CHIR NANOG647 CDX2_555 OTX2_488 DAPI_29.tif",
-    "G4-84h E14 CHIR NANOG647 CDX2_555 OTX2_488 DAPI_29.tif",
-    "G2-84h WNT3KO DMSO NANOG647 CDX2_555 OTX2_488 DAPI_18.tif",
-    "G4-84h WNT3KO DMSO NANOG647 CDX2_555 OTX2_488 DAPI_29.tif",
-    # sox2
-    "G5-E14 72H DMSO SOX2 647 OCT4 555 BRA 488 DAPI_17.tif",
-    "G1-E14 84H CHIR SOX2 647 OCT4 555 BRA 488 DAPI_30.tif",
-    "G2-E14 84H CHIR SOX2 647 OCT4 555 BRA 488 DAPI_30.tif",
-    "G3-E14 84H DMSO SOX2 647 OCT4 555 BRA 488 DAPI_22.tif",
-    "G1-Wnt3KO 96h DMSO SOX2 647 OCT4 546 BRA 488 DAPI_28.tif",
-]
+areas = []
 
 for E, EXP in enumerate(EXPERIMENTS):
     channel_names = CH_NAMES[E]
     for TIME in TIMES:
-        print()
-        print(TIME)
+        if E==0:
+            areas.append([])
+
         if TIME=="48h":
             CONDS = CONDITIONS_48
         else:
@@ -55,8 +40,6 @@ for E, EXP in enumerate(EXPERIMENTS):
             files = get_file_names(path_data_dir)
             for file in files:
                 if not ".tif" in file: continue
-                if file not in files_to_segment: continue
-                
                 file, embcode = get_file_name(path_data_dir, file, allow_file_fragment=False, return_files=False, return_name=True)
                 
                 path_data = path_data_dir+file
@@ -127,5 +110,64 @@ for E, EXP in enumerate(EXPERIMENTS):
                     channels=chans
                 )
 
-                CT.run()
-                # CT.plot(plot_args)
+                CT.load()
+                
+                for cell in CT.jitcells:
+                    zc = int(cell.centers[0][0])
+                    zcid = cell.zs[0].index(zc)
+
+                    msk = cell.masks[0][zcid]
+                    area = len(msk)
+                    areas[-1].append(area)
+                
+  
+import matplotlib as mpl
+plt.rcParams.update({
+    "text.usetex": True,
+})
+mpl.rcParams['text.latex.preamble'] = r'\usepackage{siunitx} \sisetup{detect-all} \usepackage{helvet} \usepackage{sansmath} \sansmath'
+mpl.rc('font', size=14) 
+mpl.rc('axes', labelsize=14) 
+mpl.rc('xtick', labelsize=14) 
+mpl.rc('ytick', labelsize=14) 
+mpl.rc('legend', fontsize=14) 
+
+from scipy.signal import argrelextrema
+from sklearn.neighbors import KernelDensity
+
+
+fig, ax = plt.subplots(2,len(TIMES), figsize=(14,4))
+thresholds = []
+for T in range(len(TIMES)):
+    data = np.array(areas[T])/CT.metadata["XYresolution"]**2
+    ax[0, T].hist(data, bins=200, color=[0.0, 0.8, 0.0], density=True, alpha=0.6, label=TIMES[T])
+
+    x = np.arange(0, step=0.1, stop=np.max(data))
+    bw = 5
+    modelo_kde = KernelDensity(kernel="linear", bandwidth=bw)
+    modelo_kde.fit(X=data.reshape(-1, 1))
+    densidad_pred = np.exp(modelo_kde.score_samples(x.reshape((-1, 1))))
+    ax[0, T].plot(x, densidad_pred, color="magenta")
+
+    local_minima = argrelextrema(densidad_pred, np.less)[0]
+    thresholds.append(x[local_minima[0]])
+    x_th = np.ones(len(x)) * x[local_minima[0]]
+    y_th = np.linspace(0, np.max(densidad_pred), num=len(x))
+    ax[0, T].plot(x_th, y_th, c="k", ls="--",lw=2, label="debris th.")
+
+    ax[0, T].set_ylabel("count")
+    ax[1, T].set_ylabel("count")
+
+    ax[0, T].set_title(TIMES[T])
+    ax[1, T].hist(data, bins=200, color=[0.0, 0.8, 0.0], density=True, alpha=0.6, label=TIMES[T])
+    ax[1, T].set_xlabel(r"area ($\mu$m$^2$)")
+    ax[1, T].plot(x, densidad_pred, color="magenta")
+    ax[1, T].plot(x_th, y_th, c="k", ls="--",lw=2, label="debris th.")
+
+    ax[1, T].set_xlim(-1, 75)
+plt.tight_layout()
+
+plt.savefig("/home/pablo/Desktop/PhD/projects/GastruloidRobustness/figures/debris/debris_thresholds.svg")
+plt.savefig("/home/pablo/Desktop/PhD/projects/GastruloidRobustness/figures/debris/debris_thresholds.pdf")
+plt.show()
+

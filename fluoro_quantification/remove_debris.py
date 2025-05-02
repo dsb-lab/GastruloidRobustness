@@ -1,5 +1,5 @@
 ### LOAD PACKAGE ###
-from qlivecell import get_file_name, cellSegTrack, save_4Dstack, norm_stack_per_z, compute_labels_stack, get_file_names, construct_RGB, extract_fluoro, correct_drift
+from qlivecell import get_file_name, cellSegTrack, save_4Dstack, norm_stack_per_z, get_intenity_profile, get_file_names, construct_RGB, extract_fluoro, correct_drift
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -13,34 +13,29 @@ TIMES = ["48h", "60h", "72h", "84h", "96h"]
 CONDITIONS = ["Wnt3KO_DMSO", "WT_CHIR", "WT_DMSO"]
 CONDITIONS_48 = ["Wnt3KO", "WT"]
 
-files_to_segment = [
-    # nanog
-    "G2-60h E14 CHIR NANOG647 CDX2_555 OTX2_488 DAPI_11.tif",
-    "G5-60h E14 CHIR NANOG647 CDX2_555 OTX2_488 DAPI_11.tif",
-    "G2-60h WNT3KO DMSO NANOG647 CDX2_555 OTX2_488 DAPI_11.tif",
-    "G3-Wnt3KO DMSO 72H NANOG_647 CDX2_555 OTX2_488 DAPI_07.tif",
-    "G3-84h E14 CHIR NANOG647 CDX2_555 OTX2_488 DAPI_29.tif",
-    "G4-84h E14 CHIR NANOG647 CDX2_555 OTX2_488 DAPI_29.tif",
-    "G2-84h WNT3KO DMSO NANOG647 CDX2_555 OTX2_488 DAPI_18.tif",
-    "G4-84h WNT3KO DMSO NANOG647 CDX2_555 OTX2_488 DAPI_29.tif",
-    # sox2
-    "G5-E14 72H DMSO SOX2 647 OCT4 555 BRA 488 DAPI_17.tif",
-    "G1-E14 84H CHIR SOX2 647 OCT4 555 BRA 488 DAPI_30.tif",
-    "G2-E14 84H CHIR SOX2 647 OCT4 555 BRA 488 DAPI_30.tif",
-    "G3-E14 84H DMSO SOX2 647 OCT4 555 BRA 488 DAPI_22.tif",
-    "G1-Wnt3KO 96h DMSO SOX2 647 OCT4 546 BRA 488 DAPI_28.tif",
+files_exclude = [
+    "G6-E14 48h SOX2 647 OCT4 546 BRA 488 DAPI_11.tif",
+    "G4-WNT3KO 60H DMSO SOX2 647 OCT4 555 BRA 488 DAPI_22.tif",
+    "G2-E14 96h CHIR SOX2 647 OCT4 546 BRA 488 DAPI_17.tif",
+    "G5-72h E14 CHIR NANOG647 CDX2_555 OTX2_488 DAPI_26.tif",
+    "G4-E14 DMSO 96H NANOG_647 CDX2_555 OTX2_488 DAPI_20.tif",
+    "G1-WNT3KO DMSO 96H NANOG_647 CDX2_555 OTX2_488 DAPI_31.tif",
+    "G6-96h WNT3KO DMSO NANOG647 CDX2_555 OTX2_488 DAPI_26.tif"
 ]
+
+size_thresholds = [18.3, 14.4, 14.8, 12.5, 14.600000000000001]
 
 for E, EXP in enumerate(EXPERIMENTS):
     channel_names = CH_NAMES[E]
-    for TIME in TIMES:
-        print()
-        print(TIME)
+    
+    for T, TIME in enumerate(TIMES):
         if TIME=="48h":
             CONDS = CONDITIONS_48
         else:
             CONDS = CONDITIONS
 
+        size_th = size_thresholds[T]
+        
         for COND in CONDS:
             print(COND)
             path_data_dir='/home/pablo/Desktop/PhD/projects/Data/gastruloids/stephen/{}/{}/{}/'.format(EXP, TIME, COND)
@@ -55,8 +50,7 @@ for E, EXP in enumerate(EXPERIMENTS):
             files = get_file_names(path_data_dir)
             for file in files:
                 if not ".tif" in file: continue
-                if file not in files_to_segment: continue
-                
+                if file in files_exclude: continue
                 file, embcode = get_file_name(path_data_dir, file, allow_file_fragment=False, return_files=False, return_name=True)
                 
                 path_data = path_data_dir+file
@@ -127,5 +121,20 @@ for E, EXP in enumerate(EXPERIMENTS):
                     channels=chans
                 )
 
-                CT.run()
-                # CT.plot(plot_args)
+                CT.load()
+                
+                labs_to_rem = []
+                for cell in CT.jitcells:
+                    zc = int(cell.centers[0][0])
+                    zcid = cell.zs[0].index(zc)
+
+                    mask = cell.masks[0][zcid]
+                    area = len(mask) / CT.metadata["XYresolution"]**2
+                    if area < size_th:
+                        labs_to_rem.append(cell.label)
+                    
+                for lab in labs_to_rem:
+                    CT._del_cell(lab)  
+                 
+                CT.update_labels()
+                
