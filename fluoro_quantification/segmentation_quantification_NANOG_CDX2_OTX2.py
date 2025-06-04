@@ -152,31 +152,33 @@ for T, TIME in enumerate(TIMES):
 
             # CT.update_labels()
 
-            # # Remove cells at extremes and perform z-drift correction
-            # labs_to_rem = []
-            # z_min = -1
-            # data = [[] for i in range(4)]
-            # zs = []
-            # for ch in range(CT.hyperstack.shape[2]):
-            #     correction_function, intensity_profile, z_positions = get_intenity_profile(CT, ch)
-            #     if ch==3:
-            #         z_min = np.argmax(intensity_profile)
-            #     stack = CT.hyperstack[0,:,ch].astype("float32")
-            #     for z in range(stack.shape[0]):
-            #         stack[z] = stack[z] / correction_function[z]
-            #     stack *= np.mean(intensity_profile)
-            #     CT.hyperstack[0,:,ch] = stack.astype("uint8")
-                
+            # Remove cells at extremes and perform z-drift correction
+            labs_to_rem = []
+            z_min = -1
+            data = [[] for i in range(4)]
+            zs = []
+            for ch in range(CT.hyperstack.shape[2]):
+                correction_function, intensity_profile, z_positions = get_intenity_profile(CT, ch)
+                if ch==3:
+                    z_min = z_positions[np.argmax(intensity_profile)]
+                stack = CT.hyperstack[0,:,ch].astype("float32")
+                for z in range(stack.shape[0]):
+                    stack[z] = stack[z] / correction_function[z]
+                stack *= np.mean(intensity_profile)
+                CT.hyperstack[0,:,ch] = stack.astype("uint8")
+            
             #     for cell in CT.jitcells:
             #         z = int(cell.centers[0][0])
             #         if z < z_min:
             #             labs_to_rem.append(cell.label)
             #         if z > (len(correction_function) - z_min):
             #             labs_to_rem.append(cell.label)
-                        
-            #     for lab in labs_to_rem:
-            #         print(lab)
-            #         CT._del_cell(lab)  
+            
+            # print(labs_to_rem)
+        
+            # for lab in labs_to_rem:
+            #     print(lab)
+            #     CT._del_cell(lab)  
                     
             # CT.update_labels()
 
@@ -417,7 +419,7 @@ DAPI_cleaned_96h_1 = remove_outliers(np.array(DAPI[4][1]))
 DAPI_cleaned_96h_2 = remove_outliers(np.array(DAPI[4][2]))
 
 bins = 75
-fig, ax = plt.subplots(4, 5, figsize=(16, 10), sharex='row')
+fig, ax = plt.subplots(4, 3, figsize=(16, 10), sharex='row')
 
 # 48 hours
 ax[0, 0].hist(NANOG_cleaned_48h_0, color="magenta", alpha=0.5, bins=bins, label=CONDITIONS_48[0], density=True)
@@ -481,49 +483,49 @@ ax[3, 2].hist(DAPI_cleaned_72h_1, color="green", alpha=0.5, bins=bins, density=T
 ax[3, 2].hist(DAPI_cleaned_72h_2, color="yellow", alpha=0.5, bins=bins, density=True)
 ax[3, 2].set_xlabel("DAPI")
 
-# 84 hours
-ax[0, 3].hist(NANOG_cleaned_84h_0, color="magenta", alpha=0.5, bins=bins, label=CONDITIONS[0], density=True)
-ax[0, 3].hist(NANOG_cleaned_84h_1, color="green", alpha=0.5, bins=bins, label=CONDITIONS[1], density=True)
-ax[0, 3].hist(NANOG_cleaned_84h_2, color="yellow", alpha=0.5, bins=bins, label=CONDITIONS[2], density=True)
-ax[0, 3].set_xlabel("NANOG")
-ax[0, 3].legend(loc="upper right")
+# # 84 hours
+# ax[0, 3].hist(NANOG_cleaned_84h_0, color="magenta", alpha=0.5, bins=bins, label=CONDITIONS[0], density=True)
+# ax[0, 3].hist(NANOG_cleaned_84h_1, color="green", alpha=0.5, bins=bins, label=CONDITIONS[1], density=True)
+# ax[0, 3].hist(NANOG_cleaned_84h_2, color="yellow", alpha=0.5, bins=bins, label=CONDITIONS[2], density=True)
+# ax[0, 3].set_xlabel("NANOG")
+# ax[0, 3].legend(loc="upper right")
 
-ax[1, 3].hist(CDX2_cleaned_84h_0, color="magenta", alpha=0.5, bins=bins, density=True)
-ax[1, 3].hist(CDX2_cleaned_84h_1, color="green", alpha=0.5, bins=bins, density=True)
-ax[1, 3].hist(CDX2_cleaned_84h_2, color="yellow", alpha=0.5, bins=bins, density=True)
-ax[1, 3].set_xlabel("CDX2")
+# ax[1, 3].hist(CDX2_cleaned_84h_0, color="magenta", alpha=0.5, bins=bins, density=True)
+# ax[1, 3].hist(CDX2_cleaned_84h_1, color="green", alpha=0.5, bins=bins, density=True)
+# ax[1, 3].hist(CDX2_cleaned_84h_2, color="yellow", alpha=0.5, bins=bins, density=True)
+# ax[1, 3].set_xlabel("CDX2")
 
-ax[2, 3].hist(OTX2_cleaned_84h_0, color="magenta", alpha=0.5, bins=bins, density=True)
-ax[2, 3].hist(OTX2_cleaned_84h_1, color="green", alpha=0.5, bins=bins, density=True)
-ax[2, 3].hist(OTX2_cleaned_84h_2, color="yellow", alpha=0.5, bins=bins, density=True)
-ax[2, 3].set_xlabel("OTX2")
+# ax[2, 3].hist(OTX2_cleaned_84h_0, color="magenta", alpha=0.5, bins=bins, density=True)
+# ax[2, 3].hist(OTX2_cleaned_84h_1, color="green", alpha=0.5, bins=bins, density=True)
+# ax[2, 3].hist(OTX2_cleaned_84h_2, color="yellow", alpha=0.5, bins=bins, density=True)
+# ax[2, 3].set_xlabel("OTX2")
 
-ax[3, 3].hist(DAPI_cleaned_84h_0, color="magenta", alpha=0.5, bins=bins, density=True)
-ax[3, 3].hist(DAPI_cleaned_84h_1, color="green", alpha=0.5, bins=bins, density=True)
-ax[3, 3].hist(DAPI_cleaned_84h_2, color="yellow", alpha=0.5, bins=bins, density=True)
-ax[3, 3].set_xlabel("DAPI")
+# ax[3, 3].hist(DAPI_cleaned_84h_0, color="magenta", alpha=0.5, bins=bins, density=True)
+# ax[3, 3].hist(DAPI_cleaned_84h_1, color="green", alpha=0.5, bins=bins, density=True)
+# ax[3, 3].hist(DAPI_cleaned_84h_2, color="yellow", alpha=0.5, bins=bins, density=True)
+# ax[3, 3].set_xlabel("DAPI")
 
-# 96 hours
-ax[0, 4].hist(NANOG_cleaned_96h_0, color="magenta", alpha=0.5, bins=bins, label=CONDITIONS[0], density=True)
-ax[0, 4].hist(NANOG_cleaned_96h_1, color="green", alpha=0.5, bins=bins, label=CONDITIONS[1], density=True)
-ax[0, 4].hist(NANOG_cleaned_96h_2, color="yellow", alpha=0.5, bins=bins, label=CONDITIONS[2], density=True)
-ax[0, 4].set_xlabel("NANOG")
-ax[0, 4].legend(loc="upper right")
+# # 96 hours
+# ax[0, 4].hist(NANOG_cleaned_96h_0, color="magenta", alpha=0.5, bins=bins, label=CONDITIONS[0], density=True)
+# ax[0, 4].hist(NANOG_cleaned_96h_1, color="green", alpha=0.5, bins=bins, label=CONDITIONS[1], density=True)
+# ax[0, 4].hist(NANOG_cleaned_96h_2, color="yellow", alpha=0.5, bins=bins, label=CONDITIONS[2], density=True)
+# ax[0, 4].set_xlabel("NANOG")
+# ax[0, 4].legend(loc="upper right")
 
-ax[1, 4].hist(CDX2_cleaned_96h_0, color="magenta", alpha=0.5, bins=bins, density=True)
-ax[1, 4].hist(CDX2_cleaned_96h_1, color="green", alpha=0.5, bins=bins, density=True)
-ax[1, 4].hist(CDX2_cleaned_96h_2, color="yellow", alpha=0.5, bins=bins, density=True)
-ax[1, 4].set_xlabel("CDX2")
+# ax[1, 4].hist(CDX2_cleaned_96h_0, color="magenta", alpha=0.5, bins=bins, density=True)
+# ax[1, 4].hist(CDX2_cleaned_96h_1, color="green", alpha=0.5, bins=bins, density=True)
+# ax[1, 4].hist(CDX2_cleaned_96h_2, color="yellow", alpha=0.5, bins=bins, density=True)
+# ax[1, 4].set_xlabel("CDX2")
 
-ax[2, 4].hist(OTX2_cleaned_96h_0, color="magenta", alpha=0.5, bins=bins, density=True)
-ax[2, 4].hist(OTX2_cleaned_96h_1, color="green", alpha=0.5, bins=bins, density=True)
-ax[2, 4].hist(OTX2_cleaned_96h_2, color="yellow", alpha=0.5, bins=bins, density=True)
-ax[2, 4].set_xlabel("OTX2")
+# ax[2, 4].hist(OTX2_cleaned_96h_0, color="magenta", alpha=0.5, bins=bins, density=True)
+# ax[2, 4].hist(OTX2_cleaned_96h_1, color="green", alpha=0.5, bins=bins, density=True)
+# ax[2, 4].hist(OTX2_cleaned_96h_2, color="yellow", alpha=0.5, bins=bins, density=True)
+# ax[2, 4].set_xlabel("OTX2")
 
-ax[3, 4].hist(DAPI_cleaned_96h_0, color="magenta", alpha=0.5, bins=bins, density=True)
-ax[3, 4].hist(DAPI_cleaned_96h_1, color="green", alpha=0.5, bins=bins, density=True)
-ax[3, 4].hist(DAPI_cleaned_96h_2, color="yellow", alpha=0.5, bins=bins, density=True)
-ax[3, 4].set_xlabel("DAPI")
+# ax[3, 4].hist(DAPI_cleaned_96h_0, color="magenta", alpha=0.5, bins=bins, density=True)
+# ax[3, 4].hist(DAPI_cleaned_96h_1, color="green", alpha=0.5, bins=bins, density=True)
+# ax[3, 4].hist(DAPI_cleaned_96h_2, color="yellow", alpha=0.5, bins=bins, density=True)
+# ax[3, 4].set_xlabel("DAPI")
 
 ax[0, 0].set_ylabel("density")
 ax[1, 0].set_ylabel("density")
@@ -758,80 +760,83 @@ for T, TIME in enumerate(TIMES):
 
 plt.show()
 
-nanog_th1 = np.percentile(NANOG[0][0], 99.5)
-nanog_th2 = np.percentile(NANOG[0][1], 99.5)
+nanog_th1 = np.percentile(remove_outliers(NANOG[0][0]), 99.0)
+nanog_th2 = np.percentile(remove_outliers(NANOG[0][1]), 99.0)
 
 nanog_th = np.mean([nanog_th1, nanog_th2])
 
-cdx2_th1 = np.percentile(CDX2[0][0], 99.5)
-cdx2_th2 = np.percentile(CDX2[0][1], 99.5)
+cdx2_th1 = np.percentile(remove_outliers(CDX2[0][0]), 100.0)
+cdx2_th2 = np.percentile(remove_outliers(CDX2[0][1]), 100.0)
+cdx2_th3 = np.percentile(remove_outliers(CDX2[1][0]), 100.0)
+cdx2_th4 = np.percentile(remove_outliers(CDX2[2][0]), 100.0)
 
-cdx2_th = np.mean([cdx2_th1, cdx2_th2])
+cdx2_th = np.max([cdx2_th1, cdx2_th2,cdx2_th3, cdx2_th4])
 
 from scipy.stats import gaussian_kde
-# for T, TIME in enumerate(TIMES[:3]):
-#     if TIME=="48h":
-#         CONDS = CONDITIONS_48
-#     else:
-#         CONDS = CONDITIONS
+for T, TIME in enumerate(TIMES[:3]):
+    if TIME=="48h":
+        CONDS = CONDITIONS_48
+    else:
+        CONDS = CONDITIONS
 
-#     for C, COND in enumerate(CONDS):
+    for C, COND in enumerate(CONDS):
                     
-#         fig, ax = plt.subplots(2,3, figsize=(16,10))
+        fig, ax = plt.subplots(2,3, figsize=(16,10))
 
-#         fig.suptitle(TIME + " " + COND )
-#         data1, data2 = remove_outliers_pairs(NANOG[T][C], CDX2[T][C])
-#         # Calculate the point density
-#         data12 = np.vstack([np.log(data1),np.log(data2)])
-#         cols = gaussian_kde(data12)(data12)
-#         ax[0,0].scatter(data1, data2, s=1, c=cols)
-#         ax[0,0].set_xlabel("NANOG")
-#         ax[0,0].set_ylabel("CDX2")
+        fig.suptitle(TIME + " " + COND )
+        data1, data2 = remove_outliers_pairs(NANOG[T][C], CDX2[T][C])
+        # Calculate the point density
+        data12 = np.vstack([np.log(data1),np.log(data2)])
+        cols = gaussian_kde(data12)(data12)
+        ax[0,0].scatter(data1, data2, s=1, c=cols)
+        ax[0,0].set_xlabel("NANOG")
+        ax[0,0].set_ylabel("CDX2")
 
-#         data1, data2 = remove_outliers_pairs(NANOG[T][C], DAPI[T][C])
-#         # Calculate the point density
-#         data12 = np.vstack([np.log(data1),np.log(data2)])
-#         cols = gaussian_kde(data12)(data12)
-#         ax[0,1].scatter(data1, data2, s=1, c=cols)
-#         ax[0,1].set_xlabel("NANOG")
-#         ax[0,1].set_ylabel("DAPI")
+        data1, data2 = remove_outliers_pairs(NANOG[T][C], DAPI[T][C])
+        # Calculate the point density
+        data12 = np.vstack([np.log(data1),np.log(data2)])
+        cols = gaussian_kde(data12)(data12)
+        ax[0,1].scatter(data1, data2, s=1, c=cols)
+        ax[0,1].set_xlabel("NANOG")
+        ax[0,1].set_ylabel("DAPI")
 
-#         data1, data2 = remove_outliers_pairs(NANOG[T][C], OTX2[T][C])
-#         # Calculate the point density
-#         data12 = np.vstack([np.log(data1),np.log(data2)])
-#         cols = gaussian_kde(data12)(data12)
-#         ax[0,2].scatter(data1, data2, s=1, c=cols)
-#         ax[0,2].set_xlabel("NANOG")
-#         ax[0,2].set_ylabel("OTX2")
+        data1, data2 = remove_outliers_pairs(NANOG[T][C], OTX2[T][C])
+        # Calculate the point density
+        data12 = np.vstack([np.log(data1),np.log(data2)])
+        cols = gaussian_kde(data12)(data12)
+        ax[0,2].scatter(data1, data2, s=1, c=cols)
+        ax[0,2].set_xlabel("NANOG")
+        ax[0,2].set_ylabel("OTX2")
 
-#         data1, data2 = remove_outliers_pairs(CDX2[T][C], DAPI[T][C])
-#         # Calculate the point density
-#         data12 = np.vstack([np.log(data1),np.log(data2)])
-#         cols = gaussian_kde(data12)(data12)
-#         ax[1,0].scatter(data1, data2, s=1, c=cols)
-#         ax[1,0].set_xlabel("CDX2")
-#         ax[1,0].set_ylabel("DAPI")
+        data1, data2 = remove_outliers_pairs(CDX2[T][C], DAPI[T][C])
+        # Calculate the point density
+        data12 = np.vstack([np.log(data1),np.log(data2)])
+        cols = gaussian_kde(data12)(data12)
+        ax[1,0].scatter(data1, data2, s=1, c=cols)
+        ax[1,0].set_xlabel("CDX2")
+        ax[1,0].set_ylabel("DAPI")
 
-#         data1, data2 = remove_outliers_pairs(CDX2[T][C], OTX2[T][C])
-#         # Calculate the point density
-#         data12 = np.vstack([np.log(data1),np.log(data2)])
-#         cols = gaussian_kde(data12)(data12)
-#         ax[1,1].scatter(data1, data2, s=1, c=cols)
-#         ax[1,1].set_xlabel("CDX2")
-#         ax[1,1].set_ylabel("OTX2")
+        data1, data2 = remove_outliers_pairs(CDX2[T][C], OTX2[T][C])
+        # Calculate the point density
+        data12 = np.vstack([np.log(data1),np.log(data2)])
+        cols = gaussian_kde(data12)(data12)
+        ax[1,1].scatter(data1, data2, s=1, c=cols)
+        ax[1,1].set_xlabel("CDX2")
+        ax[1,1].set_ylabel("OTX2")
 
-#         data1, data2 = remove_outliers_pairs(OTX2[T][C], DAPI[T][C])
-#         # Calculate the point density
-#         data12 = np.vstack([np.log(data1),np.log(data2)])
-#         cols = gaussian_kde(data12)(data12)
-#         ax[1,2].scatter(data1, data2, s=1, c=cols)
-#         ax[1,2].set_xlabel("OTX2")
-#         ax[1,2].set_ylabel("DAPI")
+        data1, data2 = remove_outliers_pairs(OTX2[T][C], DAPI[T][C])
+        # Calculate the point density
+        data12 = np.vstack([np.log(data1),np.log(data2)])
+        cols = gaussian_kde(data12)(data12)
+        ax[1,2].scatter(data1, data2, s=1, c=cols)
+        ax[1,2].set_xlabel("OTX2")
+        ax[1,2].set_ylabel("DAPI")
 
-#         plt.tight_layout()
-#         plt.savefig(path_save_figs+"scatters/"+TIME+"_"+COND+".pdf")
+        plt.tight_layout()
+        plt.savefig(path_save_figs+"scatters/"+TIME+"_"+COND+".pdf")
+        plt.savefig(path_save_figs+"scatters/"+TIME+"_"+COND+".svg")
 
-# plt.show()
+plt.show()
 
 fig, ax = plt.subplots(2,3, figsize=(15,10), sharex=True, sharey=True)
 
@@ -890,5 +895,99 @@ ax[1,2].axhline(cdx2_th, c="k", lw=2)
 ax[1,2].axvline(nanog_th, c="k", lw=2)
 ax[1,2].set_xlabel("NANOG")
 
+plt.savefig(path_save_figs+"scatters/nanog_cdx2.pdf")
+plt.savefig(path_save_figs+"scatters/nanog_cdx2.svg")
+plt.savefig(path_save_figs+"scatters/nanog_cdx2.png")
+
 plt.show()
 
+import pandas as pd
+
+# Define the structured data
+data = [
+    ["48h", "Wnt3KO",        [2706, 4101, 3746, 4574, 4363, 2318]],
+    ["48h", "WT",            [2992, 3214, 3047, 4212, 3395]],
+    ["60h", "Wnt3KO_DMSO",   [4539, 4869, 5019]],
+    ["60h", "WT_CHIR",       [5716, 5183, 4301, 5531, 3714]],
+    ["60h", "WT_DMSO",       [4702, 4396, 4984]],
+    ["72h", "Wnt3KO_DMSO",   [7108, 8540, 5098, 7020, 4694]],
+    ["72h", "WT_CHIR",       [6293, 5581, 5222, 4160]],
+    ["72h", "WT_DMSO",       [4189, 6386, 4991, 6204, 6337, 5428]],
+]
+
+# Create a DataFrame by expanding the list of cell counts
+rows = []
+for timepoint, condition, counts in data:
+    for count in counts:
+        rows.append([timepoint, condition, count])
+
+df = pd.DataFrame(rows, columns=["Timepoint", "Condition", "Cell_Count"])
+
+# Save to CSV
+output_path = path_save_figs+"cell_counts_nanog.csv"
+df.to_csv(output_path, index=False)
+
+output_path
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Define constants
+CATEGORIES = ['Double Negative', 'NANOG+ Only', 'CDX2+ Only', 'Double Positive']
+TIMES = ["48h", "60h", "72h"]
+CONDITIONS_48 = ["Wnt3KO", "WT"]
+CONDITIONS = ["Wnt3KO_DMSO", "WT_CHIR", "WT_DMSO"]
+
+# Generate x-axis labels
+labels = [f"{cond}_{TIMES[0]}" for cond in CONDITIONS_48] + \
+         [f"{cond}_{TIMES[1]}" for cond in CONDITIONS] + \
+         [f"{cond}_{TIMES[2]}" for cond in CONDITIONS]
+
+# Quadrant classification function
+def classify_quadrants(x, y, x_th, y_th):
+    x = np.array(x)
+    y = np.array(y)
+    total = len(x)
+    return {
+        'Double Negative': np.sum((x < x_th) & (y < y_th)) / total * 100,
+        'NANOG+ Only':     np.sum((x >= x_th) & (y < y_th)) / total * 100,
+        'CDX2+ Only':      np.sum((x < x_th) & (y >= y_th)) / total * 100,
+        'Double Positive': np.sum((x >= x_th) & (y >= y_th)) / total * 100,
+    }
+
+# Loop to collect quadrant percentages
+counts_list = []
+
+# 48h (index 0): 2 conditions
+for j in range(2):  # 0: Wnt3KO, 1: WT
+    x, y = remove_outliers_pairs(NANOG[0][j], CDX2[0][j])
+    quad_counts = classify_quadrants(x, y, nanog_th, cdx2_th)
+    counts_list.append(quad_counts)
+
+# 60h (index 1) and 72h (index 2): 3 conditions each
+for i in [1, 2]:
+    for j in range(3):  # 0: Wnt3KO_DMSO, 1: WT_CHIR, 2: WT_DMSO
+        x, y = remove_outliers_pairs(NANOG[i][j], CDX2[i][j])
+        quad_counts = classify_quadrants(x, y, nanog_th, cdx2_th)
+        counts_list.append(quad_counts)
+
+# Prepare data for stacked bar plot
+data_matrix = [[counts[cat] for counts in counts_list] for cat in CATEGORIES]
+
+# Plotting
+x = np.arange(len(labels))
+width = 0.2
+
+fig, ax = plt.subplots(figsize=(14, 6))
+for i, cat in enumerate(CATEGORIES):
+    ax.bar(x + i*width, data_matrix[i], width, label=cat)
+
+ax.set_xticks(x + 1.5 * width)
+ax.set_xticklabels(labels, rotation=45, ha="right")
+ax.set_ylabel("Percentage (%)")
+ax.set_title("Quantification of NANOG/CDX2 Expression Categories (Percentages)")
+ax.legend(title="Population")
+
+plt.tight_layout()
+plt.savefig(path_save_figs + "barplot_nanog_cdx2_quantification_percentages.pdf")
+plt.show()

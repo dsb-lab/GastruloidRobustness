@@ -137,20 +137,20 @@ for T, TIME in enumerate(TIMES):
             CT.load()
             # CT.plot(plot_args)
             
-            labs_to_rem = []
-            for cell in CT.jitcells:
-                zc = int(cell.centers[0][0])
-                zcid = cell.zs[0].index(zc)
+            # labs_to_rem = []
+            # for cell in CT.jitcells:
+            #     zc = int(cell.centers[0][0])
+            #     zcid = cell.zs[0].index(zc)
 
-                mask = cell.masks[0][zcid]
-                area = len(mask) / CT.metadata["XYresolution"]**2
-                if area < size_th:
-                    labs_to_rem.append(cell.label)
+            #     mask = cell.masks[0][zcid]
+            #     area = len(mask) / CT.metadata["XYresolution"]**2
+            #     if area < size_th:
+            #         labs_to_rem.append(cell.label)
                 
-            for lab in labs_to_rem:
-                CT._del_cell(lab)  
+            # for lab in labs_to_rem:
+            #     CT._del_cell(lab)  
 
-            CT.update_labels()
+            # CT.update_labels()
 
             # Remove cells at extremes and perform z-drift correction
             labs_to_rem = []
@@ -160,25 +160,27 @@ for T, TIME in enumerate(TIMES):
             for ch in range(CT.hyperstack.shape[2]):
                 correction_function, intensity_profile, z_positions = get_intenity_profile(CT, ch)
                 if ch==3:
-                    z_min = np.argmax(intensity_profile)
+                    z_min = z_positions[np.argmax(intensity_profile)]
                 stack = CT.hyperstack[0,:,ch].astype("float32")
                 for z in range(stack.shape[0]):
                     stack[z] = stack[z] / correction_function[z]
                 stack *= np.mean(intensity_profile)
                 CT.hyperstack[0,:,ch] = stack.astype("uint8")
                 
-                for cell in CT.jitcells:
-                    z = int(cell.centers[0][0])
-                    if z < z_min:
-                        labs_to_rem.append(cell.label)
-                    if z > (len(correction_function) - z_min):
-                        labs_to_rem.append(cell.label)
+            #     for cell in CT.jitcells:
+            #         z = int(cell.centers[0][0])
+            #         if z < z_min:
+            #             labs_to_rem.append(cell.label)
+            #         if z > (len(correction_function) - z_min):
+            #             labs_to_rem.append(cell.label)
                         
-                for lab in labs_to_rem:
-                    print(lab)
-                    CT._del_cell(lab)  
+            # print(labs_to_rem)
+        
+            # for lab in labs_to_rem:
+            #     print(lab)
+            #     CT._del_cell(lab)  
                     
-            CT.update_labels()
+            # CT.update_labels()
 
             DATA[-1][-1].append([])
             n_cells[-1][-1].append(len(CT.jitcells))
@@ -384,40 +386,40 @@ DAPI_cleaned_72h_0 = remove_outliers(np.array(DAPI[2][0]))
 DAPI_cleaned_72h_1 = remove_outliers(np.array(DAPI[2][1]))
 DAPI_cleaned_72h_2 = remove_outliers(np.array(DAPI[2][2]))
 
-SOX2_cleaned_84h_0 = remove_outliers(np.array(SOX2[3][0]))
-SOX2_cleaned_84h_1 = remove_outliers(np.array(SOX2[3][1]))
-SOX2_cleaned_84h_2 = remove_outliers(np.array(SOX2[3][2]))
+# SOX2_cleaned_84h_0 = remove_outliers(np.array(SOX2[3][0]))
+# SOX2_cleaned_84h_1 = remove_outliers(np.array(SOX2[3][1]))
+# SOX2_cleaned_84h_2 = remove_outliers(np.array(SOX2[3][2]))
 
-OCT4_cleaned_84h_0 = remove_outliers(np.array(OCT4[3][0]))
-OCT4_cleaned_84h_1 = remove_outliers(np.array(OCT4[3][1]))
-OCT4_cleaned_84h_2 = remove_outliers(np.array(OCT4[3][2]))
+# OCT4_cleaned_84h_0 = remove_outliers(np.array(OCT4[3][0]))
+# OCT4_cleaned_84h_1 = remove_outliers(np.array(OCT4[3][1]))
+# OCT4_cleaned_84h_2 = remove_outliers(np.array(OCT4[3][2]))
 
-BRA_cleaned_84h_0 = remove_outliers(np.array(BRA[3][0]))
-BRA_cleaned_84h_1 = remove_outliers(np.array(BRA[3][1]))
-BRA_cleaned_84h_2 = remove_outliers(np.array(BRA[3][2]))
+# BRA_cleaned_84h_0 = remove_outliers(np.array(BRA[3][0]))
+# BRA_cleaned_84h_1 = remove_outliers(np.array(BRA[3][1]))
+# BRA_cleaned_84h_2 = remove_outliers(np.array(BRA[3][2]))
 
-DAPI_cleaned_84h_0 = remove_outliers(np.array(DAPI[3][0]))
-DAPI_cleaned_84h_1 = remove_outliers(np.array(DAPI[3][1]))
-DAPI_cleaned_84h_2 = remove_outliers(np.array(DAPI[3][2]))
+# DAPI_cleaned_84h_0 = remove_outliers(np.array(DAPI[3][0]))
+# DAPI_cleaned_84h_1 = remove_outliers(np.array(DAPI[3][1]))
+# DAPI_cleaned_84h_2 = remove_outliers(np.array(DAPI[3][2]))
 
-SOX2_cleaned_96h_0 = remove_outliers(np.array(SOX2[4][0]))
-SOX2_cleaned_96h_1 = remove_outliers(np.array(SOX2[4][1]))
-SOX2_cleaned_96h_2 = remove_outliers(np.array(SOX2[4][2]))
+# SOX2_cleaned_96h_0 = remove_outliers(np.array(SOX2[4][0]))
+# SOX2_cleaned_96h_1 = remove_outliers(np.array(SOX2[4][1]))
+# SOX2_cleaned_96h_2 = remove_outliers(np.array(SOX2[4][2]))
 
-OCT4_cleaned_96h_0 = remove_outliers(np.array(OCT4[4][0]))
-OCT4_cleaned_96h_1 = remove_outliers(np.array(OCT4[4][1]))
-OCT4_cleaned_96h_2 = remove_outliers(np.array(OCT4[4][2]))
+# OCT4_cleaned_96h_0 = remove_outliers(np.array(OCT4[4][0]))
+# OCT4_cleaned_96h_1 = remove_outliers(np.array(OCT4[4][1]))
+# OCT4_cleaned_96h_2 = remove_outliers(np.array(OCT4[4][2]))
 
-BRA_cleaned_96h_0 = remove_outliers(np.array(BRA[4][0]))
-BRA_cleaned_96h_1 = remove_outliers(np.array(BRA[4][1]))
-BRA_cleaned_96h_2 = remove_outliers(np.array(BRA[4][2]))
+# BRA_cleaned_96h_0 = remove_outliers(np.array(BRA[4][0]))
+# BRA_cleaned_96h_1 = remove_outliers(np.array(BRA[4][1]))
+# BRA_cleaned_96h_2 = remove_outliers(np.array(BRA[4][2]))
 
-DAPI_cleaned_96h_0 = remove_outliers(np.array(DAPI[4][0]))
-DAPI_cleaned_96h_1 = remove_outliers(np.array(DAPI[4][1]))
-DAPI_cleaned_96h_2 = remove_outliers(np.array(DAPI[4][2]))
+# DAPI_cleaned_96h_0 = remove_outliers(np.array(DAPI[4][0]))
+# DAPI_cleaned_96h_1 = remove_outliers(np.array(DAPI[4][1]))
+# DAPI_cleaned_96h_2 = remove_outliers(np.array(DAPI[4][2]))
 
 bins = 75
-fig, ax = plt.subplots(4, 5, figsize=(16, 10), sharex='row')
+fig, ax = plt.subplots(4, 3, figsize=(16, 10), sharex='row')
 
 # 48 hours
 ax[0, 0].hist(SOX2_cleaned_48h_0, color="magenta", alpha=0.5, bins=bins, label=CONDITIONS_48[0], density=True)
@@ -481,49 +483,49 @@ ax[3, 2].hist(DAPI_cleaned_72h_1, color="green", alpha=0.5, bins=bins, density=T
 ax[3, 2].hist(DAPI_cleaned_72h_2, color="yellow", alpha=0.5, bins=bins, density=True)
 ax[3, 2].set_xlabel("DAPI")
 
-# 84 hours
-ax[0, 3].hist(SOX2_cleaned_84h_0, color="magenta", alpha=0.5, bins=bins, label=CONDITIONS[0], density=True)
-ax[0, 3].hist(SOX2_cleaned_84h_1, color="green", alpha=0.5, bins=bins, label=CONDITIONS[1], density=True)
-ax[0, 3].hist(SOX2_cleaned_84h_2, color="yellow", alpha=0.5, bins=bins, label=CONDITIONS[2], density=True)
-ax[0, 3].set_xlabel("SOX2")
-ax[0, 3].legend(loc="upper right")
+# # 84 hours
+# ax[0, 3].hist(SOX2_cleaned_84h_0, color="magenta", alpha=0.5, bins=bins, label=CONDITIONS[0], density=True)
+# ax[0, 3].hist(SOX2_cleaned_84h_1, color="green", alpha=0.5, bins=bins, label=CONDITIONS[1], density=True)
+# ax[0, 3].hist(SOX2_cleaned_84h_2, color="yellow", alpha=0.5, bins=bins, label=CONDITIONS[2], density=True)
+# ax[0, 3].set_xlabel("SOX2")
+# ax[0, 3].legend(loc="upper right")
 
-ax[1, 3].hist(OCT4_cleaned_84h_0, color="magenta", alpha=0.5, bins=bins, density=True)
-ax[1, 3].hist(OCT4_cleaned_84h_1, color="green", alpha=0.5, bins=bins, density=True)
-ax[1, 3].hist(OCT4_cleaned_84h_2, color="yellow", alpha=0.5, bins=bins, density=True)
-ax[1, 3].set_xlabel("OCT4")
+# ax[1, 3].hist(OCT4_cleaned_84h_0, color="magenta", alpha=0.5, bins=bins, density=True)
+# ax[1, 3].hist(OCT4_cleaned_84h_1, color="green", alpha=0.5, bins=bins, density=True)
+# ax[1, 3].hist(OCT4_cleaned_84h_2, color="yellow", alpha=0.5, bins=bins, density=True)
+# ax[1, 3].set_xlabel("OCT4")
 
-ax[2, 3].hist(BRA_cleaned_84h_0, color="magenta", alpha=0.5, bins=bins, density=True)
-ax[2, 3].hist(BRA_cleaned_84h_1, color="green", alpha=0.5, bins=bins, density=True)
-ax[2, 3].hist(BRA_cleaned_84h_2, color="yellow", alpha=0.5, bins=bins, density=True)
-ax[2, 3].set_xlabel("BRA")
+# ax[2, 3].hist(BRA_cleaned_84h_0, color="magenta", alpha=0.5, bins=bins, density=True)
+# ax[2, 3].hist(BRA_cleaned_84h_1, color="green", alpha=0.5, bins=bins, density=True)
+# ax[2, 3].hist(BRA_cleaned_84h_2, color="yellow", alpha=0.5, bins=bins, density=True)
+# ax[2, 3].set_xlabel("BRA")
 
-ax[3, 3].hist(DAPI_cleaned_84h_0, color="magenta", alpha=0.5, bins=bins, density=True)
-ax[3, 3].hist(DAPI_cleaned_84h_1, color="green", alpha=0.5, bins=bins, density=True)
-ax[3, 3].hist(DAPI_cleaned_84h_2, color="yellow", alpha=0.5, bins=bins, density=True)
-ax[3, 3].set_xlabel("DAPI")
+# ax[3, 3].hist(DAPI_cleaned_84h_0, color="magenta", alpha=0.5, bins=bins, density=True)
+# ax[3, 3].hist(DAPI_cleaned_84h_1, color="green", alpha=0.5, bins=bins, density=True)
+# ax[3, 3].hist(DAPI_cleaned_84h_2, color="yellow", alpha=0.5, bins=bins, density=True)
+# ax[3, 3].set_xlabel("DAPI")
 
-# 96 hours
-ax[0, 4].hist(SOX2_cleaned_96h_0, color="magenta", alpha=0.5, bins=bins, label=CONDITIONS[0], density=True)
-ax[0, 4].hist(SOX2_cleaned_96h_1, color="green", alpha=0.5, bins=bins, label=CONDITIONS[1], density=True)
-ax[0, 4].hist(SOX2_cleaned_96h_2, color="yellow", alpha=0.5, bins=bins, label=CONDITIONS[2], density=True)
-ax[0, 4].set_xlabel("SOX2")
-ax[0, 4].legend(loc="upper right")
+# # 96 hours
+# ax[0, 4].hist(SOX2_cleaned_96h_0, color="magenta", alpha=0.5, bins=bins, label=CONDITIONS[0], density=True)
+# ax[0, 4].hist(SOX2_cleaned_96h_1, color="green", alpha=0.5, bins=bins, label=CONDITIONS[1], density=True)
+# ax[0, 4].hist(SOX2_cleaned_96h_2, color="yellow", alpha=0.5, bins=bins, label=CONDITIONS[2], density=True)
+# ax[0, 4].set_xlabel("SOX2")
+# ax[0, 4].legend(loc="upper right")
 
-ax[1, 4].hist(OCT4_cleaned_96h_0, color="magenta", alpha=0.5, bins=bins, density=True)
-ax[1, 4].hist(OCT4_cleaned_96h_1, color="green", alpha=0.5, bins=bins, density=True)
-ax[1, 4].hist(OCT4_cleaned_96h_2, color="yellow", alpha=0.5, bins=bins, density=True)
-ax[1, 4].set_xlabel("OCT4")
+# ax[1, 4].hist(OCT4_cleaned_96h_0, color="magenta", alpha=0.5, bins=bins, density=True)
+# ax[1, 4].hist(OCT4_cleaned_96h_1, color="green", alpha=0.5, bins=bins, density=True)
+# ax[1, 4].hist(OCT4_cleaned_96h_2, color="yellow", alpha=0.5, bins=bins, density=True)
+# ax[1, 4].set_xlabel("OCT4")
 
-ax[2, 4].hist(BRA_cleaned_96h_0, color="magenta", alpha=0.5, bins=bins, density=True)
-ax[2, 4].hist(BRA_cleaned_96h_1, color="green", alpha=0.5, bins=bins, density=True)
-ax[2, 4].hist(BRA_cleaned_96h_2, color="yellow", alpha=0.5, bins=bins, density=True)
-ax[2, 4].set_xlabel("BRA")
+# ax[2, 4].hist(BRA_cleaned_96h_0, color="magenta", alpha=0.5, bins=bins, density=True)
+# ax[2, 4].hist(BRA_cleaned_96h_1, color="green", alpha=0.5, bins=bins, density=True)
+# ax[2, 4].hist(BRA_cleaned_96h_2, color="yellow", alpha=0.5, bins=bins, density=True)
+# ax[2, 4].set_xlabel("BRA")
 
-ax[3, 4].hist(DAPI_cleaned_96h_0, color="magenta", alpha=0.5, bins=bins, density=True)
-ax[3, 4].hist(DAPI_cleaned_96h_1, color="green", alpha=0.5, bins=bins, density=True)
-ax[3, 4].hist(DAPI_cleaned_96h_2, color="yellow", alpha=0.5, bins=bins, density=True)
-ax[3, 4].set_xlabel("DAPI")
+# ax[3, 4].hist(DAPI_cleaned_96h_0, color="magenta", alpha=0.5, bins=bins, density=True)
+# ax[3, 4].hist(DAPI_cleaned_96h_1, color="green", alpha=0.5, bins=bins, density=True)
+# ax[3, 4].hist(DAPI_cleaned_96h_2, color="yellow", alpha=0.5, bins=bins, density=True)
+# ax[3, 4].set_xlabel("DAPI")
 
 ax[0, 0].set_ylabel("density")
 ax[1, 0].set_ylabel("density")
@@ -830,65 +832,34 @@ for T, TIME in enumerate(TIMES[:3]):
 
         plt.tight_layout()
         plt.savefig(path_save_figs+"scatters/"+TIME+"_"+COND+".pdf")
+        plt.savefig(path_save_figs+"scatters/"+TIME+"_"+COND+".svg")
 
 plt.show()
 
-fig, ax = plt.subplots(2,3, figsize=(15,10), sharex=True, sharey=True)
+# Re-import libraries due to kernel reset
+import pandas as pd
 
-data1, data2 = remove_outliers_pairs(SOX2[0][1], OCT4[0][1])
-# Calculate the point density
-data12 = np.vstack([data1,data2])
-cols = gaussian_kde(data12)(data12)
-ax[0,0].scatter(data1, data2, s=1, c=cols)
-ax[0,0].axhline(OCT4_th, c="k", lw=2)
-ax[0,0].axvline(SOX2_th, c="k", lw=2)
-ax[0,0].set_ylabel("OCT4")
+# Define the new dataset again
+data_2 = [
+    ["48h", "Wnt3KO",        [3094, 3671, 3696, 3587, 3658, 3896]],
+    ["48h", "WT",            [4681, 4007, 3606, 2784, 3393]],
+    ["60h", "Wnt3KO_DMSO",   [5238, 4121, 4051, 5508]],
+    ["60h", "WT_CHIR",       [4971, 5417, 5555]],
+    ["60h", "WT_DMSO",       [6494, 4526]],
+    ["72h", "Wnt3KO_DMSO",   [7891, 6681, 5445, 7052, 8387, 6812, 6072]],
+    ["72h", "WT_CHIR",       [6474, 5287, 6164, 5953, 6822]],
+    ["72h", "WT_DMSO",       [5055, 6447, 5103, 5993, 5807, 6658]],
+]
 
-ax[0,1].set_title("WT CHIRON")
-data1, data2 = remove_outliers_pairs(SOX2[1][1], OCT4[1][1])
-# Calculate the point density
-data12 = np.vstack([data1,data2])
-cols = gaussian_kde(data12)(data12)
-ax[0,1].scatter(data1, data2, s=1, c=cols)
-ax[0,1].axhline(OCT4_th, c="k", lw=2)
-ax[0,1].axvline(SOX2_th, c="k", lw=2)
+# Convert to DataFrame
+rows_2 = []
+for timepoint, condition, counts in data_2:
+    for count in counts:
+        rows_2.append([timepoint, condition, count])
 
-data1, data2 = remove_outliers_pairs(SOX2[2][1], OCT4[2][1])
-# Calculate the point density
-data12 = np.vstack([data1,data2])
-cols = gaussian_kde(data12)(data12)
-ax[0,2].scatter(data1, data2, s=1, c=cols)
-ax[0,2].axhline(OCT4_th, c="k", lw=2)
-ax[0,2].axvline(SOX2_th, c="k", lw=2)
+df_2 = pd.DataFrame(rows_2, columns=["Timepoint", "Condition", "Cell_Count"])
 
-data1, data2 = remove_outliers_pairs(SOX2[0][0], OCT4[0][0])
-# Calculate the point density
-data12 = np.vstack([data1,data2])
-cols = gaussian_kde(data12)(data12)
-ax[1,0].scatter(data1, data2, s=1, c=cols)
-ax[1,0].axhline(OCT4_th, c="k", lw=2)
-ax[1,0].axvline(SOX2_th, c="k", lw=2)
-ax[1,0].set_xlabel("SOX2")
-ax[1,0].set_ylabel("OCT4")
-
-ax[1,1].set_title("Wnt3KO")
-data1, data2 = remove_outliers_pairs(SOX2[1][0], OCT4[1][0])
-# Calculate the point density
-data12 = np.vstack([data1,data2])
-cols = gaussian_kde(data12)(data12)
-ax[1,1].scatter(data1, data2, s=1, c=cols)
-ax[1,1].axhline(OCT4_th, c="k", lw=2)
-ax[1,1].axvline(SOX2_th, c="k", lw=2)
-ax[1,1].set_xlabel("SOX2")
-
-data1, data2 = remove_outliers_pairs(SOX2[2][0], OCT4[2][0])
-# Calculate the point density
-data12 = np.vstack([data1,data2])
-cols = gaussian_kde(data12)(data12)
-ax[1,2].scatter(data1, data2, s=1, c=cols)
-ax[1,2].axhline(OCT4_th, c="k", lw=2)
-ax[1,2].axvline(SOX2_th, c="k", lw=2)
-ax[1,2].set_xlabel("SOX2")
-
-plt.show()
+# Save to CSV
+output_path = path_save_figs+"cell_counts_nanog.csv"
+df_2.to_csv(output_path, index=False)
 
