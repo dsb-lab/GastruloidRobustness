@@ -13,23 +13,23 @@ TIMES = ["48h", "60h", "72h", "84h", "96h"]
 CONDITIONS = ["Wnt3KO_DMSO", "WT_CHIR", "WT_DMSO"]
 CONDITIONS_48 = ["Wnt3KO", "WT"]
 
-files_to_segment = [
-    # nanog
-    "G2-60h E14 CHIR NANOG647 CDX2_555 OTX2_488 DAPI_11.tif",
-    "G5-60h E14 CHIR NANOG647 CDX2_555 OTX2_488 DAPI_11.tif",
-    "G2-60h WNT3KO DMSO NANOG647 CDX2_555 OTX2_488 DAPI_11.tif",
-    "G3-Wnt3KO DMSO 72H NANOG_647 CDX2_555 OTX2_488 DAPI_07.tif",
-    "G3-84h E14 CHIR NANOG647 CDX2_555 OTX2_488 DAPI_29.tif",
-    "G4-84h E14 CHIR NANOG647 CDX2_555 OTX2_488 DAPI_29.tif",
-    "G2-84h WNT3KO DMSO NANOG647 CDX2_555 OTX2_488 DAPI_18.tif",
-    "G4-84h WNT3KO DMSO NANOG647 CDX2_555 OTX2_488 DAPI_29.tif",
-    # sox2
-    "G5-E14 72H DMSO SOX2 647 OCT4 555 BRA 488 DAPI_17.tif",
-    "G1-E14 84H CHIR SOX2 647 OCT4 555 BRA 488 DAPI_30.tif",
-    "G2-E14 84H CHIR SOX2 647 OCT4 555 BRA 488 DAPI_30.tif",
-    "G3-E14 84H DMSO SOX2 647 OCT4 555 BRA 488 DAPI_22.tif",
-    "G1-Wnt3KO 96h DMSO SOX2 647 OCT4 546 BRA 488 DAPI_28.tif",
-]
+# files_to_segment = [
+#     # nanog
+#     "G2-60h E14 CHIR NANOG647 CDX2_555 OTX2_488 DAPI_11.tif",
+#     "G5-60h E14 CHIR NANOG647 CDX2_555 OTX2_488 DAPI_11.tif",
+#     "G2-60h WNT3KO DMSO NANOG647 CDX2_555 OTX2_488 DAPI_11.tif",
+#     "G3-Wnt3KO DMSO 72H NANOG_647 CDX2_555 OTX2_488 DAPI_07.tif",
+#     "G3-84h E14 CHIR NANOG647 CDX2_555 OTX2_488 DAPI_29.tif",
+#     "G4-84h E14 CHIR NANOG647 CDX2_555 OTX2_488 DAPI_29.tif",
+#     "G2-84h WNT3KO DMSO NANOG647 CDX2_555 OTX2_488 DAPI_18.tif",
+#     "G4-84h WNT3KO DMSO NANOG647 CDX2_555 OTX2_488 DAPI_29.tif",
+#     # sox2
+#     "G5-E14 72H DMSO SOX2 647 OCT4 555 BRA 488 DAPI_17.tif",
+#     "G1-E14 84H CHIR SOX2 647 OCT4 555 BRA 488 DAPI_30.tif",
+#     "G2-E14 84H CHIR SOX2 647 OCT4 555 BRA 488 DAPI_30.tif",
+#     "G3-E14 84H DMSO SOX2 647 OCT4 555 BRA 488 DAPI_22.tif",
+#     "G1-Wnt3KO 96h DMSO SOX2 647 OCT4 546 BRA 488 DAPI_28.tif",
+# ]
 
 for E, EXP in enumerate(EXPERIMENTS):
     channel_names = CH_NAMES[E]
@@ -55,7 +55,7 @@ for E, EXP in enumerate(EXPERIMENTS):
             files = get_file_names(path_data_dir)
             for file in files:
                 if not ".tif" in file: continue
-                if file not in files_to_segment: continue
+                # if file not in files_to_segment: continue
                 
                 file, embcode = get_file_name(path_data_dir, file, allow_file_fragment=False, return_files=False, return_name=True)
                 
