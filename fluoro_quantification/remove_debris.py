@@ -48,6 +48,7 @@ for E, EXP in enumerate(EXPERIMENTS):
             
             ### GET FULL FILE NAME AND FILE CODE ###
             files = get_file_names(path_data_dir)
+            counter=0
             for file in files:
                 if not ".tif" in file: continue
                 if file in files_exclude: continue
@@ -103,7 +104,7 @@ for E, EXP in enumerate(EXPERIMENTS):
                     'plot_layout': (1,1),
                     'plot_overlap': 1,
                     'masks_cmap': 'tab10',
-                    # 'plot_stack_dims': (256, 256), 
+                    'plot_stack_dims': (256, 256), 
                     'plot_centers':[False, False], # [Plot center as a dot, plot label on 3D center]
                     'channels':[ch],
                     # 'channels': chans_plot,
@@ -137,4 +138,6 @@ for E, EXP in enumerate(EXPERIMENTS):
                     CT._del_cell(lab)  
                  
                 CT.update_labels()
-                
+                if counter==0:
+                    CT.plot_tracking()
+                counter+=1

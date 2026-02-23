@@ -12,6 +12,7 @@ path_save_figs="/home/pablo/Desktop/PhD/projects/GastruloidRobustness/figures/So
 EXP = "Sox2_Oct4_Bra_DAPI"
 TIMES = ["48h", "60h", "72h"]
 # TIMES = ["48h", "60h", "72h", "84h", "96h"]
+TIMES = ["48h", "72h", "96h"]
 
 CONDITIONS = ["Wnt3KO_DMSO", "WT_CHIR", "WT_DMSO"]
 CONDITIONS_48 = ["Wnt3KO", "WT"]
@@ -167,20 +168,18 @@ for T, TIME in enumerate(TIMES):
                 stack *= np.mean(intensity_profile)
                 CT.hyperstack[0,:,ch] = stack.astype("uint8")
                 
-            #     for cell in CT.jitcells:
-            #         z = int(cell.centers[0][0])
-            #         if z < z_min:
-            #             labs_to_rem.append(cell.label)
-            #         if z > (len(correction_function) - z_min):
-            #             labs_to_rem.append(cell.label)
-                        
-            # print(labs_to_rem)
-        
-            # for lab in labs_to_rem:
-            #     print(lab)
-            #     CT._del_cell(lab)  
+                for cell in CT.jitcells:
+                    z = int(cell.centers[0][0])
+                    if z < z_min:
+                        labs_to_rem.append(cell.label)
+                    if z > (len(correction_function) - z_min):
+                        labs_to_rem.append(cell.label)
+                                
+            for lab in labs_to_rem:
+                print(lab)
+                CT._del_cell(lab)  
                     
-            # CT.update_labels()
+            CT.update_labels()
 
             DATA[-1][-1].append([])
             n_cells[-1][-1].append(len(CT.jitcells))
@@ -386,37 +385,37 @@ DAPI_cleaned_72h_0 = remove_outliers(np.array(DAPI[2][0]))
 DAPI_cleaned_72h_1 = remove_outliers(np.array(DAPI[2][1]))
 DAPI_cleaned_72h_2 = remove_outliers(np.array(DAPI[2][2]))
 
-# SOX2_cleaned_84h_0 = remove_outliers(np.array(SOX2[3][0]))
-# SOX2_cleaned_84h_1 = remove_outliers(np.array(SOX2[3][1]))
-# SOX2_cleaned_84h_2 = remove_outliers(np.array(SOX2[3][2]))
+SOX2_cleaned_84h_0 = remove_outliers(np.array(SOX2[3][0]))
+SOX2_cleaned_84h_1 = remove_outliers(np.array(SOX2[3][1]))
+SOX2_cleaned_84h_2 = remove_outliers(np.array(SOX2[3][2]))
 
-# OCT4_cleaned_84h_0 = remove_outliers(np.array(OCT4[3][0]))
-# OCT4_cleaned_84h_1 = remove_outliers(np.array(OCT4[3][1]))
-# OCT4_cleaned_84h_2 = remove_outliers(np.array(OCT4[3][2]))
+OCT4_cleaned_84h_0 = remove_outliers(np.array(OCT4[3][0]))
+OCT4_cleaned_84h_1 = remove_outliers(np.array(OCT4[3][1]))
+OCT4_cleaned_84h_2 = remove_outliers(np.array(OCT4[3][2]))
 
-# BRA_cleaned_84h_0 = remove_outliers(np.array(BRA[3][0]))
-# BRA_cleaned_84h_1 = remove_outliers(np.array(BRA[3][1]))
-# BRA_cleaned_84h_2 = remove_outliers(np.array(BRA[3][2]))
+BRA_cleaned_84h_0 = remove_outliers(np.array(BRA[3][0]))
+BRA_cleaned_84h_1 = remove_outliers(np.array(BRA[3][1]))
+BRA_cleaned_84h_2 = remove_outliers(np.array(BRA[3][2]))
 
-# DAPI_cleaned_84h_0 = remove_outliers(np.array(DAPI[3][0]))
-# DAPI_cleaned_84h_1 = remove_outliers(np.array(DAPI[3][1]))
-# DAPI_cleaned_84h_2 = remove_outliers(np.array(DAPI[3][2]))
+DAPI_cleaned_84h_0 = remove_outliers(np.array(DAPI[3][0]))
+DAPI_cleaned_84h_1 = remove_outliers(np.array(DAPI[3][1]))
+DAPI_cleaned_84h_2 = remove_outliers(np.array(DAPI[3][2]))
 
-# SOX2_cleaned_96h_0 = remove_outliers(np.array(SOX2[4][0]))
-# SOX2_cleaned_96h_1 = remove_outliers(np.array(SOX2[4][1]))
-# SOX2_cleaned_96h_2 = remove_outliers(np.array(SOX2[4][2]))
+SOX2_cleaned_96h_0 = remove_outliers(np.array(SOX2[4][0]))
+SOX2_cleaned_96h_1 = remove_outliers(np.array(SOX2[4][1]))
+SOX2_cleaned_96h_2 = remove_outliers(np.array(SOX2[4][2]))
 
-# OCT4_cleaned_96h_0 = remove_outliers(np.array(OCT4[4][0]))
-# OCT4_cleaned_96h_1 = remove_outliers(np.array(OCT4[4][1]))
-# OCT4_cleaned_96h_2 = remove_outliers(np.array(OCT4[4][2]))
+OCT4_cleaned_96h_0 = remove_outliers(np.array(OCT4[4][0]))
+OCT4_cleaned_96h_1 = remove_outliers(np.array(OCT4[4][1]))
+OCT4_cleaned_96h_2 = remove_outliers(np.array(OCT4[4][2]))
 
-# BRA_cleaned_96h_0 = remove_outliers(np.array(BRA[4][0]))
-# BRA_cleaned_96h_1 = remove_outliers(np.array(BRA[4][1]))
-# BRA_cleaned_96h_2 = remove_outliers(np.array(BRA[4][2]))
+BRA_cleaned_96h_0 = remove_outliers(np.array(BRA[4][0]))
+BRA_cleaned_96h_1 = remove_outliers(np.array(BRA[4][1]))
+BRA_cleaned_96h_2 = remove_outliers(np.array(BRA[4][2]))
 
-# DAPI_cleaned_96h_0 = remove_outliers(np.array(DAPI[4][0]))
-# DAPI_cleaned_96h_1 = remove_outliers(np.array(DAPI[4][1]))
-# DAPI_cleaned_96h_2 = remove_outliers(np.array(DAPI[4][2]))
+DAPI_cleaned_96h_0 = remove_outliers(np.array(DAPI[4][0]))
+DAPI_cleaned_96h_1 = remove_outliers(np.array(DAPI[4][1]))
+DAPI_cleaned_96h_2 = remove_outliers(np.array(DAPI[4][2]))
 
 bins = 75
 fig, ax = plt.subplots(4, 3, figsize=(16, 10), sharex='row')
@@ -483,49 +482,49 @@ ax[3, 2].hist(DAPI_cleaned_72h_1, color="green", alpha=0.5, bins=bins, density=T
 ax[3, 2].hist(DAPI_cleaned_72h_2, color="yellow", alpha=0.5, bins=bins, density=True)
 ax[3, 2].set_xlabel("DAPI")
 
-# # 84 hours
-# ax[0, 3].hist(SOX2_cleaned_84h_0, color="magenta", alpha=0.5, bins=bins, label=CONDITIONS[0], density=True)
-# ax[0, 3].hist(SOX2_cleaned_84h_1, color="green", alpha=0.5, bins=bins, label=CONDITIONS[1], density=True)
-# ax[0, 3].hist(SOX2_cleaned_84h_2, color="yellow", alpha=0.5, bins=bins, label=CONDITIONS[2], density=True)
-# ax[0, 3].set_xlabel("SOX2")
-# ax[0, 3].legend(loc="upper right")
+# 84 hours
+ax[0, 3].hist(SOX2_cleaned_84h_0, color="magenta", alpha=0.5, bins=bins, label=CONDITIONS[0], density=True)
+ax[0, 3].hist(SOX2_cleaned_84h_1, color="green", alpha=0.5, bins=bins, label=CONDITIONS[1], density=True)
+ax[0, 3].hist(SOX2_cleaned_84h_2, color="yellow", alpha=0.5, bins=bins, label=CONDITIONS[2], density=True)
+ax[0, 3].set_xlabel("SOX2")
+ax[0, 3].legend(loc="upper right")
 
-# ax[1, 3].hist(OCT4_cleaned_84h_0, color="magenta", alpha=0.5, bins=bins, density=True)
-# ax[1, 3].hist(OCT4_cleaned_84h_1, color="green", alpha=0.5, bins=bins, density=True)
-# ax[1, 3].hist(OCT4_cleaned_84h_2, color="yellow", alpha=0.5, bins=bins, density=True)
-# ax[1, 3].set_xlabel("OCT4")
+ax[1, 3].hist(OCT4_cleaned_84h_0, color="magenta", alpha=0.5, bins=bins, density=True)
+ax[1, 3].hist(OCT4_cleaned_84h_1, color="green", alpha=0.5, bins=bins, density=True)
+ax[1, 3].hist(OCT4_cleaned_84h_2, color="yellow", alpha=0.5, bins=bins, density=True)
+ax[1, 3].set_xlabel("OCT4")
 
-# ax[2, 3].hist(BRA_cleaned_84h_0, color="magenta", alpha=0.5, bins=bins, density=True)
-# ax[2, 3].hist(BRA_cleaned_84h_1, color="green", alpha=0.5, bins=bins, density=True)
-# ax[2, 3].hist(BRA_cleaned_84h_2, color="yellow", alpha=0.5, bins=bins, density=True)
-# ax[2, 3].set_xlabel("BRA")
+ax[2, 3].hist(BRA_cleaned_84h_0, color="magenta", alpha=0.5, bins=bins, density=True)
+ax[2, 3].hist(BRA_cleaned_84h_1, color="green", alpha=0.5, bins=bins, density=True)
+ax[2, 3].hist(BRA_cleaned_84h_2, color="yellow", alpha=0.5, bins=bins, density=True)
+ax[2, 3].set_xlabel("BRA")
 
-# ax[3, 3].hist(DAPI_cleaned_84h_0, color="magenta", alpha=0.5, bins=bins, density=True)
-# ax[3, 3].hist(DAPI_cleaned_84h_1, color="green", alpha=0.5, bins=bins, density=True)
-# ax[3, 3].hist(DAPI_cleaned_84h_2, color="yellow", alpha=0.5, bins=bins, density=True)
-# ax[3, 3].set_xlabel("DAPI")
+ax[3, 3].hist(DAPI_cleaned_84h_0, color="magenta", alpha=0.5, bins=bins, density=True)
+ax[3, 3].hist(DAPI_cleaned_84h_1, color="green", alpha=0.5, bins=bins, density=True)
+ax[3, 3].hist(DAPI_cleaned_84h_2, color="yellow", alpha=0.5, bins=bins, density=True)
+ax[3, 3].set_xlabel("DAPI")
 
-# # 96 hours
-# ax[0, 4].hist(SOX2_cleaned_96h_0, color="magenta", alpha=0.5, bins=bins, label=CONDITIONS[0], density=True)
-# ax[0, 4].hist(SOX2_cleaned_96h_1, color="green", alpha=0.5, bins=bins, label=CONDITIONS[1], density=True)
-# ax[0, 4].hist(SOX2_cleaned_96h_2, color="yellow", alpha=0.5, bins=bins, label=CONDITIONS[2], density=True)
-# ax[0, 4].set_xlabel("SOX2")
-# ax[0, 4].legend(loc="upper right")
+# 96 hours
+ax[0, 4].hist(SOX2_cleaned_96h_0, color="magenta", alpha=0.5, bins=bins, label=CONDITIONS[0], density=True)
+ax[0, 4].hist(SOX2_cleaned_96h_1, color="green", alpha=0.5, bins=bins, label=CONDITIONS[1], density=True)
+ax[0, 4].hist(SOX2_cleaned_96h_2, color="yellow", alpha=0.5, bins=bins, label=CONDITIONS[2], density=True)
+ax[0, 4].set_xlabel("SOX2")
+ax[0, 4].legend(loc="upper right")
 
-# ax[1, 4].hist(OCT4_cleaned_96h_0, color="magenta", alpha=0.5, bins=bins, density=True)
-# ax[1, 4].hist(OCT4_cleaned_96h_1, color="green", alpha=0.5, bins=bins, density=True)
-# ax[1, 4].hist(OCT4_cleaned_96h_2, color="yellow", alpha=0.5, bins=bins, density=True)
-# ax[1, 4].set_xlabel("OCT4")
+ax[1, 4].hist(OCT4_cleaned_96h_0, color="magenta", alpha=0.5, bins=bins, density=True)
+ax[1, 4].hist(OCT4_cleaned_96h_1, color="green", alpha=0.5, bins=bins, density=True)
+ax[1, 4].hist(OCT4_cleaned_96h_2, color="yellow", alpha=0.5, bins=bins, density=True)
+ax[1, 4].set_xlabel("OCT4")
 
-# ax[2, 4].hist(BRA_cleaned_96h_0, color="magenta", alpha=0.5, bins=bins, density=True)
-# ax[2, 4].hist(BRA_cleaned_96h_1, color="green", alpha=0.5, bins=bins, density=True)
-# ax[2, 4].hist(BRA_cleaned_96h_2, color="yellow", alpha=0.5, bins=bins, density=True)
-# ax[2, 4].set_xlabel("BRA")
+ax[2, 4].hist(BRA_cleaned_96h_0, color="magenta", alpha=0.5, bins=bins, density=True)
+ax[2, 4].hist(BRA_cleaned_96h_1, color="green", alpha=0.5, bins=bins, density=True)
+ax[2, 4].hist(BRA_cleaned_96h_2, color="yellow", alpha=0.5, bins=bins, density=True)
+ax[2, 4].set_xlabel("BRA")
 
-# ax[3, 4].hist(DAPI_cleaned_96h_0, color="magenta", alpha=0.5, bins=bins, density=True)
-# ax[3, 4].hist(DAPI_cleaned_96h_1, color="green", alpha=0.5, bins=bins, density=True)
-# ax[3, 4].hist(DAPI_cleaned_96h_2, color="yellow", alpha=0.5, bins=bins, density=True)
-# ax[3, 4].set_xlabel("DAPI")
+ax[3, 4].hist(DAPI_cleaned_96h_0, color="magenta", alpha=0.5, bins=bins, density=True)
+ax[3, 4].hist(DAPI_cleaned_96h_1, color="green", alpha=0.5, bins=bins, density=True)
+ax[3, 4].hist(DAPI_cleaned_96h_2, color="yellow", alpha=0.5, bins=bins, density=True)
+ax[3, 4].set_xlabel("DAPI")
 
 ax[0, 0].set_ylabel("density")
 ax[1, 0].set_ylabel("density")
@@ -539,77 +538,6 @@ ax[0, 2].set_title("72 hours")
 plt.tight_layout()
 plt.savefig(path_save_figs+"quantification_SOX2.pdf")
 plt.savefig(path_save_figs+"quantification_SOX2.svg")
-plt.show()
-
-bins = 75
-fig, ax = plt.subplots(4, 3, figsize=(16, 10), sharex='row')
-
-# 48 hours
-ax[0, 0].hist(SOX2_cleaned_48h_0, color="magenta", alpha=0.5, bins=bins, label=CONDITIONS_48[0], density=True)
-ax[0, 0].hist(SOX2_cleaned_48h_1, color="green", alpha=0.5, bins=bins, label=CONDITIONS_48[1], density=True)
-ax[0, 0].set_xlabel("SOX2")
-ax[0, 0].legend(loc="upper right")
-
-ax[1, 0].hist(OCT4_cleaned_48h_0, color="magenta", alpha=0.5, bins=bins, density=True)
-ax[1, 0].hist(OCT4_cleaned_48h_1, color="green", alpha=0.5, bins=bins, density=True)
-ax[1, 0].set_xlabel("OCT4")
-
-ax[2, 0].hist(BRA_cleaned_48h_0, color="magenta", alpha=0.5, bins=bins, density=True)
-ax[2, 0].hist(BRA_cleaned_48h_1, color="green", alpha=0.5, bins=bins, density=True)
-ax[2, 0].set_xlabel("BRA")
-
-ax[3, 0].hist(DAPI_cleaned_48h_0, color="magenta", alpha=0.5, bins=bins, density=True)
-ax[3, 0].hist(DAPI_cleaned_48h_1, color="green", alpha=0.5, bins=bins, density=True)
-ax[3, 0].set_xlabel("DAPI")
-
-# 60 hours
-ax[0, 1].hist(SOX2_cleaned_60h_0, color="magenta", alpha=0.5, bins=bins, label=CONDITIONS[0], density=True)
-ax[0, 1].hist(SOX2_cleaned_60h_1, color="green", alpha=0.5, bins=bins, label=CONDITIONS[1], density=True)
-ax[0, 1].set_xlabel("SOX2")
-ax[0, 1].legend(loc="upper right")
-
-ax[1, 1].hist(OCT4_cleaned_60h_0, color="magenta", alpha=0.5, bins=bins, density=True)
-ax[1, 1].hist(OCT4_cleaned_60h_1, color="green", alpha=0.5, bins=bins, density=True)
-ax[1, 1].set_xlabel("OCT4")
-
-ax[2, 1].hist(BRA_cleaned_60h_0, color="magenta", alpha=0.5, bins=bins, density=True)
-ax[2, 1].hist(BRA_cleaned_60h_1, color="green", alpha=0.5, bins=bins, density=True)
-ax[2, 1].set_xlabel("BRA")
-
-ax[3, 1].hist(DAPI_cleaned_60h_0, color="magenta", alpha=0.5, bins=bins, density=True)
-ax[3, 1].hist(DAPI_cleaned_60h_1, color="green", alpha=0.5, bins=bins, density=True)
-ax[3, 1].set_xlabel("DAPI")
-
-# 72 hours
-ax[0, 2].hist(SOX2_cleaned_72h_0, color="magenta", alpha=0.5, bins=bins, label=CONDITIONS[0], density=True)
-ax[0, 2].hist(SOX2_cleaned_72h_1, color="green", alpha=0.5, bins=bins, label=CONDITIONS[1], density=True)
-ax[0, 2].set_xlabel("SOX2")
-ax[0, 2].legend(loc="upper right")
-
-ax[1, 2].hist(OCT4_cleaned_72h_0, color="magenta", alpha=0.5, bins=bins, density=True)
-ax[1, 2].hist(OCT4_cleaned_72h_1, color="green", alpha=0.5, bins=bins, density=True)
-ax[1, 2].set_xlabel("OCT4")
-
-ax[2, 2].hist(BRA_cleaned_72h_0, color="magenta", alpha=0.5, bins=bins, density=True)
-ax[2, 2].hist(BRA_cleaned_72h_1, color="green", alpha=0.5, bins=bins, density=True)
-ax[2, 2].set_xlabel("BRA")
-
-ax[3, 2].hist(DAPI_cleaned_72h_0, color="magenta", alpha=0.5, bins=bins, density=True)
-ax[3, 2].hist(DAPI_cleaned_72h_1, color="green", alpha=0.5, bins=bins, density=True)
-ax[3, 2].set_xlabel("DAPI")
-
-ax[0, 0].set_ylabel("density")
-ax[1, 0].set_ylabel("density")
-ax[2, 0].set_ylabel("density")
-ax[3, 0].set_ylabel("density")
-
-ax[0, 0].set_title("48 hours")
-ax[0, 1].set_title("60 hours")
-ax[0, 2].set_title("72 hours")
-
-plt.tight_layout()
-plt.savefig(path_save_figs+"quantification_noDMSO_SOX2.pdf")
-plt.savefig(path_save_figs+"quantification_noDMSO_SOX2.svg")
 plt.show()
 
 SOX2_test = []

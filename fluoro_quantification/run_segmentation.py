@@ -8,8 +8,10 @@ from stardist.models import StarDist2D
 model = StarDist2D.from_pretrained('2D_versatile_fluo')
 ### PATH TO YOU DATA FOLDER AND TO YOUR SAVING FOLDER ###
 EXPERIMENTS = ["Sox2_Oct4_Bra_DAPI", "Nanog_Cdx2_Otx2_DAPI"]
+
 CH_NAMES = [["SOX2", "OCT4", "BRA", "DAPI"], ["NANOG", "CDX2", "OTX2", "DAPI"]]
 TIMES = ["48h", "60h", "72h", "84h", "96h"]
+
 CONDITIONS = ["Wnt3KO_DMSO", "WT_CHIR", "WT_DMSO"]
 CONDITIONS_48 = ["Wnt3KO", "WT"]
 

@@ -12,6 +12,7 @@ path_save_figs = '/home/pablo/Desktop/PhD/projects/GastruloidRobustness/figures/
 EXP = "Nanog_Cdx2_Otx2_DAPI"
 TIMES = ["48h", "60h", "72h"]
 # TIMES = ["48h", "60h", "72h", "84h", "96h"]
+TIMES = ["48h", "72h", "96h"]
 
 CONDITIONS = ["Wnt3KO_DMSO", "WT_CHIR", "WT_DMSO"]
 CONDITIONS_48 = ["Wnt3KO", "WT"]
@@ -137,20 +138,20 @@ for T, TIME in enumerate(TIMES):
             CT.load()
             # CT.plot(plot_args)
             
-            # labs_to_rem = []
-            # for cell in CT.jitcells:
-            #     zc = int(cell.centers[0][0])
-            #     zcid = cell.zs[0].index(zc)
+            labs_to_rem = []
+            for cell in CT.jitcells:
+                zc = int(cell.centers[0][0])
+                zcid = cell.zs[0].index(zc)
 
-            #     mask = cell.masks[0][zcid]
-            #     area = len(mask) / CT.metadata["XYresolution"]**2
-            #     if area < size_th:
-            #         labs_to_rem.append(cell.label)
+                mask = cell.masks[0][zcid]
+                area = len(mask) / CT.metadata["XYresolution"]**2
+                if area < size_th:
+                    labs_to_rem.append(cell.label)
                 
-            # for lab in labs_to_rem:
-            #     CT._del_cell(lab)  
+            for lab in labs_to_rem:
+                CT._del_cell(lab)  
 
-            # CT.update_labels()
+            CT.update_labels()
 
             # Remove cells at extremes and perform z-drift correction
             labs_to_rem = []
@@ -167,20 +168,18 @@ for T, TIME in enumerate(TIMES):
                 stack *= np.mean(intensity_profile)
                 CT.hyperstack[0,:,ch] = stack.astype("uint8")
             
-            #     for cell in CT.jitcells:
-            #         z = int(cell.centers[0][0])
-            #         if z < z_min:
-            #             labs_to_rem.append(cell.label)
-            #         if z > (len(correction_function) - z_min):
-            #             labs_to_rem.append(cell.label)
-            
-            # print(labs_to_rem)
-        
-            # for lab in labs_to_rem:
-            #     print(lab)
-            #     CT._del_cell(lab)  
+                for cell in CT.jitcells:
+                    z = int(cell.centers[0][0])
+                    if z < z_min:
+                        labs_to_rem.append(cell.label)
+                    if z > (len(correction_function) - z_min):
+                        labs_to_rem.append(cell.label)
+                
+            for lab in labs_to_rem:
+                print(lab)
+                CT._del_cell(lab)  
                     
-            # CT.update_labels()
+            CT.update_labels()
 
             DATA[-1][-1].append([])
             n_cells[-1][-1].append(len(CT.jitcells))
@@ -419,7 +418,7 @@ DAPI_cleaned_96h_1 = remove_outliers(np.array(DAPI[4][1]))
 DAPI_cleaned_96h_2 = remove_outliers(np.array(DAPI[4][2]))
 
 bins = 75
-fig, ax = plt.subplots(4, 3, figsize=(16, 10), sharex='row')
+fig, ax = plt.subplots(4, 5, figsize=(16, 10), sharex='row')
 
 # 48 hours
 ax[0, 0].hist(NANOG_cleaned_48h_0, color="magenta", alpha=0.5, bins=bins, label=CONDITIONS_48[0], density=True)
@@ -483,49 +482,49 @@ ax[3, 2].hist(DAPI_cleaned_72h_1, color="green", alpha=0.5, bins=bins, density=T
 ax[3, 2].hist(DAPI_cleaned_72h_2, color="yellow", alpha=0.5, bins=bins, density=True)
 ax[3, 2].set_xlabel("DAPI")
 
-# # 84 hours
-# ax[0, 3].hist(NANOG_cleaned_84h_0, color="magenta", alpha=0.5, bins=bins, label=CONDITIONS[0], density=True)
-# ax[0, 3].hist(NANOG_cleaned_84h_1, color="green", alpha=0.5, bins=bins, label=CONDITIONS[1], density=True)
-# ax[0, 3].hist(NANOG_cleaned_84h_2, color="yellow", alpha=0.5, bins=bins, label=CONDITIONS[2], density=True)
-# ax[0, 3].set_xlabel("NANOG")
-# ax[0, 3].legend(loc="upper right")
+# 84 hours
+ax[0, 3].hist(NANOG_cleaned_84h_0, color="magenta", alpha=0.5, bins=bins, label=CONDITIONS[0], density=True)
+ax[0, 3].hist(NANOG_cleaned_84h_1, color="green", alpha=0.5, bins=bins, label=CONDITIONS[1], density=True)
+ax[0, 3].hist(NANOG_cleaned_84h_2, color="yellow", alpha=0.5, bins=bins, label=CONDITIONS[2], density=True)
+ax[0, 3].set_xlabel("NANOG")
+ax[0, 3].legend(loc="upper right")
 
-# ax[1, 3].hist(CDX2_cleaned_84h_0, color="magenta", alpha=0.5, bins=bins, density=True)
-# ax[1, 3].hist(CDX2_cleaned_84h_1, color="green", alpha=0.5, bins=bins, density=True)
-# ax[1, 3].hist(CDX2_cleaned_84h_2, color="yellow", alpha=0.5, bins=bins, density=True)
-# ax[1, 3].set_xlabel("CDX2")
+ax[1, 3].hist(CDX2_cleaned_84h_0, color="magenta", alpha=0.5, bins=bins, density=True)
+ax[1, 3].hist(CDX2_cleaned_84h_1, color="green", alpha=0.5, bins=bins, density=True)
+ax[1, 3].hist(CDX2_cleaned_84h_2, color="yellow", alpha=0.5, bins=bins, density=True)
+ax[1, 3].set_xlabel("CDX2")
 
-# ax[2, 3].hist(OTX2_cleaned_84h_0, color="magenta", alpha=0.5, bins=bins, density=True)
-# ax[2, 3].hist(OTX2_cleaned_84h_1, color="green", alpha=0.5, bins=bins, density=True)
-# ax[2, 3].hist(OTX2_cleaned_84h_2, color="yellow", alpha=0.5, bins=bins, density=True)
-# ax[2, 3].set_xlabel("OTX2")
+ax[2, 3].hist(OTX2_cleaned_84h_0, color="magenta", alpha=0.5, bins=bins, density=True)
+ax[2, 3].hist(OTX2_cleaned_84h_1, color="green", alpha=0.5, bins=bins, density=True)
+ax[2, 3].hist(OTX2_cleaned_84h_2, color="yellow", alpha=0.5, bins=bins, density=True)
+ax[2, 3].set_xlabel("OTX2")
 
-# ax[3, 3].hist(DAPI_cleaned_84h_0, color="magenta", alpha=0.5, bins=bins, density=True)
-# ax[3, 3].hist(DAPI_cleaned_84h_1, color="green", alpha=0.5, bins=bins, density=True)
-# ax[3, 3].hist(DAPI_cleaned_84h_2, color="yellow", alpha=0.5, bins=bins, density=True)
-# ax[3, 3].set_xlabel("DAPI")
+ax[3, 3].hist(DAPI_cleaned_84h_0, color="magenta", alpha=0.5, bins=bins, density=True)
+ax[3, 3].hist(DAPI_cleaned_84h_1, color="green", alpha=0.5, bins=bins, density=True)
+ax[3, 3].hist(DAPI_cleaned_84h_2, color="yellow", alpha=0.5, bins=bins, density=True)
+ax[3, 3].set_xlabel("DAPI")
 
-# # 96 hours
-# ax[0, 4].hist(NANOG_cleaned_96h_0, color="magenta", alpha=0.5, bins=bins, label=CONDITIONS[0], density=True)
-# ax[0, 4].hist(NANOG_cleaned_96h_1, color="green", alpha=0.5, bins=bins, label=CONDITIONS[1], density=True)
-# ax[0, 4].hist(NANOG_cleaned_96h_2, color="yellow", alpha=0.5, bins=bins, label=CONDITIONS[2], density=True)
-# ax[0, 4].set_xlabel("NANOG")
-# ax[0, 4].legend(loc="upper right")
+# 96 hours
+ax[0, 4].hist(NANOG_cleaned_96h_0, color="magenta", alpha=0.5, bins=bins, label=CONDITIONS[0], density=True)
+ax[0, 4].hist(NANOG_cleaned_96h_1, color="green", alpha=0.5, bins=bins, label=CONDITIONS[1], density=True)
+ax[0, 4].hist(NANOG_cleaned_96h_2, color="yellow", alpha=0.5, bins=bins, label=CONDITIONS[2], density=True)
+ax[0, 4].set_xlabel("NANOG")
+ax[0, 4].legend(loc="upper right")
 
-# ax[1, 4].hist(CDX2_cleaned_96h_0, color="magenta", alpha=0.5, bins=bins, density=True)
-# ax[1, 4].hist(CDX2_cleaned_96h_1, color="green", alpha=0.5, bins=bins, density=True)
-# ax[1, 4].hist(CDX2_cleaned_96h_2, color="yellow", alpha=0.5, bins=bins, density=True)
-# ax[1, 4].set_xlabel("CDX2")
+ax[1, 4].hist(CDX2_cleaned_96h_0, color="magenta", alpha=0.5, bins=bins, density=True)
+ax[1, 4].hist(CDX2_cleaned_96h_1, color="green", alpha=0.5, bins=bins, density=True)
+ax[1, 4].hist(CDX2_cleaned_96h_2, color="yellow", alpha=0.5, bins=bins, density=True)
+ax[1, 4].set_xlabel("CDX2")
 
-# ax[2, 4].hist(OTX2_cleaned_96h_0, color="magenta", alpha=0.5, bins=bins, density=True)
-# ax[2, 4].hist(OTX2_cleaned_96h_1, color="green", alpha=0.5, bins=bins, density=True)
-# ax[2, 4].hist(OTX2_cleaned_96h_2, color="yellow", alpha=0.5, bins=bins, density=True)
-# ax[2, 4].set_xlabel("OTX2")
+ax[2, 4].hist(OTX2_cleaned_96h_0, color="magenta", alpha=0.5, bins=bins, density=True)
+ax[2, 4].hist(OTX2_cleaned_96h_1, color="green", alpha=0.5, bins=bins, density=True)
+ax[2, 4].hist(OTX2_cleaned_96h_2, color="yellow", alpha=0.5, bins=bins, density=True)
+ax[2, 4].set_xlabel("OTX2")
 
-# ax[3, 4].hist(DAPI_cleaned_96h_0, color="magenta", alpha=0.5, bins=bins, density=True)
-# ax[3, 4].hist(DAPI_cleaned_96h_1, color="green", alpha=0.5, bins=bins, density=True)
-# ax[3, 4].hist(DAPI_cleaned_96h_2, color="yellow", alpha=0.5, bins=bins, density=True)
-# ax[3, 4].set_xlabel("DAPI")
+ax[3, 4].hist(DAPI_cleaned_96h_0, color="magenta", alpha=0.5, bins=bins, density=True)
+ax[3, 4].hist(DAPI_cleaned_96h_1, color="green", alpha=0.5, bins=bins, density=True)
+ax[3, 4].hist(DAPI_cleaned_96h_2, color="yellow", alpha=0.5, bins=bins, density=True)
+ax[3, 4].set_xlabel("DAPI")
 
 ax[0, 0].set_ylabel("density")
 ax[1, 0].set_ylabel("density")
@@ -535,81 +534,12 @@ ax[3, 0].set_ylabel("density")
 ax[0, 0].set_title("48 hours")
 ax[0, 1].set_title("60 hours")
 ax[0, 2].set_title("72 hours")
+ax[0, 3].set_title("84 hours")
+ax[0, 4].set_title("96 hours")
 
 plt.tight_layout()
 plt.savefig(path_save_figs+"quantification_nanog.pdf")
 plt.savefig(path_save_figs+"quantification_nanog.svg")
-plt.show()
-
-bins = 75
-fig, ax = plt.subplots(4, 3, figsize=(16, 10), sharex='row')
-
-# 48 hours
-ax[0, 0].hist(NANOG_cleaned_48h_0, color="magenta", alpha=0.5, bins=bins, label=CONDITIONS_48[0], density=True)
-ax[0, 0].hist(NANOG_cleaned_48h_1, color="green", alpha=0.5, bins=bins, label=CONDITIONS_48[1], density=True)
-ax[0, 0].set_xlabel("NANOG")
-ax[0, 0].legend(loc="upper right")
-
-ax[1, 0].hist(CDX2_cleaned_48h_0, color="magenta", alpha=0.5, bins=bins, density=True)
-ax[1, 0].hist(CDX2_cleaned_48h_1, color="green", alpha=0.5, bins=bins, density=True)
-ax[1, 0].set_xlabel("CDX2")
-
-ax[2, 0].hist(OTX2_cleaned_48h_0, color="magenta", alpha=0.5, bins=bins, density=True)
-ax[2, 0].hist(OTX2_cleaned_48h_1, color="green", alpha=0.5, bins=bins, density=True)
-ax[2, 0].set_xlabel("OTX2")
-
-ax[3, 0].hist(DAPI_cleaned_48h_0, color="magenta", alpha=0.5, bins=bins, density=True)
-ax[3, 0].hist(DAPI_cleaned_48h_1, color="green", alpha=0.5, bins=bins, density=True)
-ax[3, 0].set_xlabel("DAPI")
-
-# 60 hours
-ax[0, 1].hist(NANOG_cleaned_60h_0, color="magenta", alpha=0.5, bins=bins, label=CONDITIONS[0], density=True)
-ax[0, 1].hist(NANOG_cleaned_60h_1, color="green", alpha=0.5, bins=bins, label=CONDITIONS[1], density=True)
-ax[0, 1].set_xlabel("NANOG")
-ax[0, 1].legend(loc="upper right")
-
-ax[1, 1].hist(CDX2_cleaned_60h_0, color="magenta", alpha=0.5, bins=bins, density=True)
-ax[1, 1].hist(CDX2_cleaned_60h_1, color="green", alpha=0.5, bins=bins, density=True)
-ax[1, 1].set_xlabel("CDX2")
-
-ax[2, 1].hist(OTX2_cleaned_60h_0, color="magenta", alpha=0.5, bins=bins, density=True)
-ax[2, 1].hist(OTX2_cleaned_60h_1, color="green", alpha=0.5, bins=bins, density=True)
-ax[2, 1].set_xlabel("OTX2")
-
-ax[3, 1].hist(DAPI_cleaned_60h_0, color="magenta", alpha=0.5, bins=bins, density=True)
-ax[3, 1].hist(DAPI_cleaned_60h_1, color="green", alpha=0.5, bins=bins, density=True)
-ax[3, 1].set_xlabel("DAPI")
-
-# 72 hours
-ax[0, 2].hist(NANOG_cleaned_72h_0, color="magenta", alpha=0.5, bins=bins, label=CONDITIONS[0], density=True)
-ax[0, 2].hist(NANOG_cleaned_72h_1, color="green", alpha=0.5, bins=bins, label=CONDITIONS[1], density=True)
-ax[0, 2].set_xlabel("NANOG")
-ax[0, 2].legend(loc="upper right")
-
-ax[1, 2].hist(CDX2_cleaned_72h_0, color="magenta", alpha=0.5, bins=bins, density=True)
-ax[1, 2].hist(CDX2_cleaned_72h_1, color="green", alpha=0.5, bins=bins, density=True)
-ax[1, 2].set_xlabel("CDX2")
-
-ax[2, 2].hist(OTX2_cleaned_72h_0, color="magenta", alpha=0.5, bins=bins, density=True)
-ax[2, 2].hist(OTX2_cleaned_72h_1, color="green", alpha=0.5, bins=bins, density=True)
-ax[2, 2].set_xlabel("OTX2")
-
-ax[3, 2].hist(DAPI_cleaned_72h_0, color="magenta", alpha=0.5, bins=bins, density=True)
-ax[3, 2].hist(DAPI_cleaned_72h_1, color="green", alpha=0.5, bins=bins, density=True)
-ax[3, 2].set_xlabel("DAPI")
-
-ax[0, 0].set_ylabel("density")
-ax[1, 0].set_ylabel("density")
-ax[2, 0].set_ylabel("density")
-ax[3, 0].set_ylabel("density")
-
-ax[0, 0].set_title("48 hours")
-ax[0, 1].set_title("60 hours")
-ax[0, 2].set_title("72 hours")
-
-plt.tight_layout()
-plt.savefig(path_save_figs+"quantification_noDMSO_nanog.pdf")
-plt.savefig(path_save_figs+"quantification_noDMSO_nanog.svg")
 plt.show()
 
 NANOG_test = []
